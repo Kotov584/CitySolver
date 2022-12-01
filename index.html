@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+   <head>
+      <title>City Solver</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+      <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v5.15.4/css/all.css">
+      <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap&branch=[experimental]&key="></script>
+      <script type="text/javascript">
+      var map = null;
+
+      function getMap()
+      {
+        map = new Microsoft.Maps.Map(document.getElementById('myMap'), {});
+
+        map.setView({ //some issue with setView
+            center: map.Location(38.597021, 22.319500),
+            zoom: 7
+        });
+      }   
+      </script>
+   </head>
+   <body onload="getMap();"> 
+ 
+    <div id='myMap' class="w-full h-screen"></div>
+  
+    <div class="h-32 bg-gray-50 bottom-0 w-full border-t-2 border-solid">
+        <label for="">Issue</label>
+        <input type="text"></input>
+        <label for="">Description of issue</label>
+        <textarea name="" id="" cols="30" rows="5" placeholder="Description of issue"></textarea>
+        <select name="" id="">
+            <option value="">Test</option>
+        </select>
+        <button class="border-solid border-2 w-40">
+            Submit
+        </button> 
+    </div>
+   </body>
+
+   <script src="https://cdn.tailwindcss.com"></script>
+</html>
+
