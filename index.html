@@ -1,42 +1,134 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
-   <head>
-      <title>City Solver</title>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-      <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v5.15.4/css/all.css">
-      <script type="text/javascript" src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap&branch=[experimental]&key="></script>
-      <script type="text/javascript">
-      var map = null;
-
-      function getMap()
-      {
-        map = new Microsoft.Maps.Map(document.getElementById('myMap'), {});
-
-        map.setView({ //some issue with setView
-            center: map.Location(38.597021, 22.319500),
-            zoom: 7
-        });
-      }   
-      </script>
-   </head>
-   <body onload="getMap();"> 
- 
-    <div id='myMap' class="w-full h-screen"></div>
-  
-    <div class="h-32 bg-gray-50 bottom-0 w-full border-t-2 border-solid">
-        <label for="">Issue</label>
-        <input type="text"></input>
-        <label for="">Description of issue</label>
-        <textarea name="" id="" cols="30" rows="5" placeholder="Description of issue"></textarea>
-        <select name="" id="">
-            <option value="">Test</option>
-        </select>
-        <button class="border-solid border-2 w-40">
-            Submit
-        </button> 
+  <head>
+    <title>citySolver - Open-source tool to solve problems in your city!</title>
+    <style> 
+      #map {
+        height: 500px;
+        width: 800px;
+      }
+    </style>
+  </head>
+  <body>  
+    <div id="modal" style="display:none">
+        <div id="modal-content">
+        <span id="close-button">&times;</span>
+        <h2 id="modal-title"></h2>
+        <p id="modal-description"></p>
+        </div>
     </div>
-   </body>
+  
+    <div id="map"></div>
+    <br />
+    
+    <form>
+      Latitude: <input type="text" id="latitude" value="51.048615" />
+      Longitude: <input type="text" id="longitude" value="-114.070847" />
+      Title: <input type="text" id="title" value="Calgary" />
+      Description: <input type="text" id="description" value="Calgary, Alberta, Canada" />
+      <input type="button" value="Add Pin" onclick="addPin()" />
+    </form>
 
-   <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.bing.com/api/maps/mapcontrol?callback=loadMap&key=Aq1wzCueclD_4j0mDvcsHeBl7yJ3zYF_IEG7uT9BjCfbF0zukaWT8E7x31ZVyyIc"></script>
+    <script> 
+    let BING_MAPS_API_KEY = 'Aq1wzCueclD_4j0mDvcsHeBl7yJ3zYF_IEG7uT9BjCfbF0zukaWT8E7x31ZVyyIc';
+    let map; 
+    let customPins = [];
+
+    function loadMap() { 
+        map = new Microsoft.Maps.Map(document.getElementById("map"), {
+        center: new Microsoft.Maps.Location(51.048615, -114.070847),
+        zoom: 10,
+        });
+
+        addPinsToMap(customPins);
+    }
+
+    function addPin() { 
+    let latitude = document.getElementById("latitude").value;
+    let longitude = document.getElementById("longitude").value;
+    let title = document.getElementById("title").value;
+    let description = document.getElementById("description").value;
+
+    let pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(latitude, longitude), {
+        title: title,
+        subTitle: description,
+    });
+
+    customPins.push(pin);
+
+    addPinsToMap([pin]);
+    }
+
+    function addPinsToMap(pins) { 
+        pins.forEach((pin) => {
+            map.entities.push(pin);
+        });
+
+        customPins.forEach((pin) => {
+            Microsoft.Maps.Events.addHandler(pin, "click", function() {
+              let title = pin.getTitle();
+              let description = pin.getSubTitle();
+          
+              document.getElementById("modal-title").innerHTML = title;
+              document.getElementById("modal-description").innerHTML = description;
+              document.getElementById("modal").style.display = "block";
+            });
+        });
+          
+    }
+ 
+    /*function getGeolocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    let latitude = position.coords.latitude;
+                    let longitude = position.coords.longitude;
+        
+                    map.setView({ center: new Microsoft.Maps.Location(latitude, longitude) });
+        
+                    let pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(latitude, longitude), {
+                    title: "Your Location",
+                    });
+                    map.entities.push(pin);
+                },
+                function() { 
+                    map.setView({ center: new Microsoft.Maps.Location(51.048615, -114.070847) });
+                }
+            );
+        }
+    }
+
+    function getCoordinatesFromAddress(address) { 
+        let request = "http://dev.virtualearth.net/REST/v1/Locations?query=" + encodeURIComponent(address) + "&key=" + BING_MAPS_API_KEY;
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", request);
+        xhr.onload = function() {
+          if (xhr.status === 200) { 
+            let response = JSON.parse(xhr.responseText);
+            let location = response.resourceSets[0].resources[0].point.coordinates;
+            return { latitude: location[0], longitude: location[1] };
+          }
+            
+          return null;
+        };
+        xhr.send();
+    }
+
+    function addPinByAddress() { 
+        let address = document.getElementById("address").value; 
+        let coordinates = getCoordinatesFromAddress(address);
+
+        if (coordinates) { 
+          let pin = new Microsoft.Maps.Pushpin(new Microsoft.Maps.Location(coordinates.latitude, coordinates.longitude), {
+            title: address,
+          });
+          map.entities.push(pin);
+        } else { 
+          alert("Invalid address. Please try again.");
+        }
+    }*/      
+    </script>
+    </body>
 </html>
-
+      
